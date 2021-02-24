@@ -4,8 +4,9 @@ import styles from '../styles/components/Countdown.module.css'
 let countdownTimeOut: NodeJS.Timeout;
 
 export function Countdown() {
-  const [time, setTime] = useState(0.1 * 60);
+  const [time, setTime] = useState(0.05 * 60);
   const [countdownIsActive, setCountdownIsActive] = useState(false);
+  const [countdownHasFinished, setCountdownHasFinished] = useState(false);
 
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
@@ -20,7 +21,7 @@ export function Countdown() {
   function resetCountdown() {
     clearTimeout(countdownTimeOut);
     setCountdownIsActive(false);
-    setTime(0.1 * 60)
+    setTime(0.05 * 60)
   }
 
   useEffect(() => {
@@ -28,6 +29,9 @@ export function Countdown() {
       countdownTimeOut = setTimeout(() => {
         setTime(time -1);
       }, 1000);
+    } else if (countdownIsActive && time === 0) {
+      setCountdownHasFinished(true);
+      setCountdownIsActive(false);
     }
   }, [countdownIsActive, time])
 
@@ -45,23 +49,39 @@ export function Countdown() {
         </div>
       </div>
 
-      { countdownIsActive ? (
-        <button 
-          type="button" 
-          className={`${styles.countdownButton} ${styles.countdownButtonActive}`}
-          onClick={resetCountdown}
-        >
-          Abandonar ciclo
-        </button>
-      ) : (
-        <button 
-          type="button" 
-          className={styles.countdownButton}
-          onClick={startCountdown}
-        >
-          Iniciar um ciclo
-        </button>
-      )}
+      {
+        countdownHasFinished ? (
+          <button
+            disabled 
+            className={styles.countdownButton}
+            onClick={resetCountdown}
+          >
+            Ciclo encerrado
+          </button>
+        ) : (
+          <>
+            { countdownIsActive ? (
+              <button 
+                type="button" 
+                className={`${styles.countdownButton} ${styles.countdownButtonActive}`}
+                onClick={resetCountdown}
+              >
+                Abandonar ciclo
+              </button>
+            ) : (
+              <button 
+                type="button" 
+                className={styles.countdownButton}
+                onClick={startCountdown}
+              >
+                Iniciar um ciclo
+              </button>
+            )}
+          </>
+        )
+      }
+
+      
     </div>
   )
 }
