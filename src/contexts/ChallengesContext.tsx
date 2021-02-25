@@ -45,7 +45,10 @@ export function ChallengesProvider({ children } : ChallengesProviderProps) {
   function startNewChallenge() {
     const randonChallengeIndex = Math.floor(Math.random() * challenges.length);
     const challenge = challenges[randonChallengeIndex];
-    setActiveChallenge(challenge)
+
+    setActiveChallenge(challenge);
+
+    new Audio('/notification.mp3').play();
 
     if(Notification.permission === 'granted') {
       new Notification('Novo Desafio', {
